@@ -1,21 +1,23 @@
 
 import React, { useState } from "react";
 import Menu from "./components/glassMenu/GlassMenu";
-import { GlassListMenu, GlassButton, GlassDock } from "./components/glassElement/GlassElement";
+import GlassWindow from "./components/glassWindow/GlassWindow";
 import "./App.scss";
 
 export default function App() {
-  const [currentPage, setPage] = useState("home");
+  const [currentPage, setPage] = useState("profile");
 
   return (
     <>
       <main>
-        <h1>Page Content</h1>
-        <p>bla bla bla</p>
-		<GlassButton />
-		<GlassDock />
-		<GlassListMenu />
-      </main>
+      <GlassWindow className="glass-center" width="min(1200px, 92vw)" padding="1rem">
+        {/* Your content goes here */}
+        <h1 style={{ margin: 0 }}>Hello 👋</h1>
+        <p style={{ opacity: 0.85 }}>
+          Drop anything inside this window—forms, lists, dashboards, or modals.
+        </p>
+      </GlassWindow>
+    </main>
 
       <div className="floating-menu-container" aria-hidden="false">
         <Menu

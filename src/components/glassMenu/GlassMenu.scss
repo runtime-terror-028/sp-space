@@ -1,13 +1,3 @@
-
-/* LiquidGlassSwitcher — Dynamic glassmorphic toggle with TEXT buttons
-   - Works with any number of buttons (>= 2)
-   - Pure UI; no global theme changes
-   - Capsule element is positioned via CSS variables provided inline by JSX
-*/
-
-/* Optional font; remove if you manage fonts globally */
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap");
-
 /* =========================
    Component design tokens
    ========================= */
@@ -137,12 +127,12 @@
 
 /* Hover/active states */
 .switcher__option:hover {
-  --c: var(--c-action);
+ // --c: var(--c-action);
   cursor: pointer;
 }
-.switcher__option:hover .switcher__text {
-  transform: translateY(-1px);
-}
+// .switcher__option:hover .switcher__text {
+//   transform: translateY(-1px);
+// }
 
 /* Checked state — keep text stable */
 .switcher__option:has(.switcher__input:checked) {
