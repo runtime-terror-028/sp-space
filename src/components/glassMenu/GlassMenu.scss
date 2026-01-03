@@ -1,0 +1,198 @@
+
+/* LiquidGlassSwitcher — Dynamic glassmorphic toggle with TEXT buttons
+   - Works with any number of buttons (>= 2)
+   - Pure UI; no global theme changes
+   - Capsule element is positioned via CSS variables provided inline by JSX
+*/
+
+/* Optional font; remove if you manage fonts globally */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap");
+
+/* =========================
+   Component design tokens
+   ========================= */
+.switcher {
+  /* Local palette */
+  --c-glass: #c9c9cc;         /* neutral glass tint */
+  --c-light: #ffffff;         /* light edge/reflection color */
+  --c-dark: #000000;          /* dark edge/reflection color */
+  --c-content: #223344;       /* text color inside buttons */
+  --c-action: #0d6efd;        /* hover accent color */
+
+  /* Glass highlights intensity */
+  --glass-reflex-dark: 1;
+  --glass-reflex-light: 1;
+  --saturation: 150%;
+
+  /* Layout / dimensions */
+  --switcher-width: 320px;               /* wider by default for variable button counts */
+  --switcher-height: 70px;
+  --capsule-pad: 4px;
+  --gap: 8px;
+
+  font-family: "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+/* =========================
+   Switcher container
+   ========================= */
+.switcher {
+  position: relative; /* place anywhere; change to fixed for top-center if desired */
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+
+  min-width: 220px;
+  width: var(--switcher-width);
+  height: var(--switcher-height);
+  box-sizing: border-box;
+  padding: 8px 12px 10px;
+  border: none;
+  border-radius: 99em;
+
+  /* Glassmorphism background */
+  background-color: color-mix(in srgb, var(--c-glass) 12%, transparent);
+  backdrop-filter: blur(8px) url(#switcher) saturate(var(--saturation));
+  -webkit-backdrop-filter: blur(8px) saturate(var(--saturation));
+
+  /* Subtle glass edges & inner shadows */
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+    inset 1.8px 3px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent),
+    inset -2px -2px 0px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent),
+    inset -3px -8px 1px -6px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent),
+    inset -0.3px -1px 4px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 12%), transparent),
+    inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent),
+    inset 0px 3px 4px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent),
+    inset 2px -6.5px 1px -4px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent),
+    0px 1px 5px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent),
+    0px 6px 16px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
+
+  transition:
+    background-color 400ms cubic-bezier(1, 0, 0.4, 1),
+    box-shadow 400ms cubic-bezier(1, 0, 0.4, 1);
+}
+
+/* Visually hidden legend for accessibility */
+.switcher__legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+/* Hide native radios, keep them accessible */
+.switcher__input {
+  clip: rect(0 0 0 0);
+  clip-path: inset(100%);
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+/* Option pill */
+.switcher__option {
+  --c: var(--c-content);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Fluid width to support any number of buttons */
+  flex: 1 1 auto;
+  min-width: 64px;            /* ensure reasonable minimum */
+  height: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+  border-radius: 99em;
+  opacity: 1;
+  transition: all 160ms;
+  outline: none;
+}
+
+/* Text label inside the pill */
+.switcher__text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  /* Typography */
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: var(--c);
+
+  /* Motion */
+  transition: transform 200ms cubic-bezier(0.5, 0, 0, 1), color 160ms;
+  transform: translateZ(0);
+}
+
+/* Hover/active states */
+.switcher__option:hover {
+  --c: var(--c-action);
+  cursor: pointer;
+}
+.switcher__option:hover .switcher__text {
+  transform: translateY(-1px);
+}
+
+/* Checked state — keep text stable */
+.switcher__option:has(.switcher__input:checked) {
+  --c: var(--c-content);
+  cursor: default;
+}
+.switcher__option:has(.switcher__input:checked) .switcher__text {
+  transform: none;
+}
+
+/* Keyboard focus ring */
+.switcher__input:focus-visible + .switcher__text {
+  outline: 2px solid color-mix(in srgb, var(--c-action) 60%, transparent);
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
+/* =========================
+   Moving glass capsule (dynamic)
+   ========================= */
+.switcher__capsule {
+  position: absolute;
+  top: var(--capsule-pad);
+  left: var(--capsule-pad);
+
+  width: var(--capsule-w);               /* provided by JSX */
+  height: calc(100% - (var(--capsule-pad) + 6px));
+  border-radius: 99em;
+  z-index: -1;
+
+  /* Visuals */
+  background-color: color-mix(in srgb, var(--c-glass) 36%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 10%), transparent),
+    inset 2px 1px 0px -1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 90%), transparent),
+    inset -1.5px -1px 0px -1px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 80%), transparent),
+    inset -2px -6px 1px -5px color-mix(in srgb, var(--c-light) calc(var(--glass-reflex-light) * 60%), transparent),
+    inset -1px 2px 3px -1px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 20%), transparent),
+    inset 0px -4px 1px -2px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 10%), transparent),
+    0px 3px 6px 0px color-mix(in srgb, var(--c-dark) calc(var(--glass-reflex-dark) * 8%), transparent);
+
+  /* Movement */
+  transform: translateX(var(--capsule-x));
+  transition: transform 400ms cubic-bezier(1, 0, 0.4, 1), width 260ms ease;
+}
+
+/* Hidden SVG filter hook (for backdrop-filter url(#switcher)) */
+.switcher__filter {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: -1;
+}

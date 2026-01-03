@@ -1,0 +1,17 @@
+
+.floating-menu-container {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 1000;
+
+  /* Optional container visuals (useful if Menu is transparent) */
+  /* padding: 6px; */
+  /* border-radius: 999px; */
+  /* background: color-mix(in srgb, #c9c9cc 12%, transparent); */
+  /* backdrop-filter: blur(8px) saturate(150%); */
+  /* -webkit-backdrop-filter: blur(8px) saturate(150%); */
+}
+
+// main { padding-bottom: 120px; }
